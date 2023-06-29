@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+
+    <div class="container w-50 mx-auto">
+
+        <h3> Search a Stock </h3>
+        <form class="input-group my-5" action="/quote">
+            <input type="search" class="form-control" placeholder="Enter stock's name" name="stock_ticker" required>
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+
+        {% if stocks %}
+
+            <table class="table table-light mt-5 table-striped text-center rounded-table">
+                <tr>
+                    <th> Name </th>
+                    <th> Price </th>
+                    <th> Symbol </th>
+                </tr>
+
+                <tr>
+                    <td> {{stocks['name']}} </td>
+                    <td> {{stocks['price']}} </td>
+                    <td> {{stocks['symbol']}} </td>
+
+                </tr>
+
+            </table>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+    <!-- implement javascript live search engine of the tickers -->
+    <script>
+
+    </script>
+
+{% endblock %}

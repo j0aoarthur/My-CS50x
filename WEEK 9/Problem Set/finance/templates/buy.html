@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+
+    <div class="w-50 mx-auto">
+
+        <h3> Buy a Stock </h3>
+        <form class="input-group mt-3" action="/buy" method="post">
+            <input type="search" class="form-control w-25" placeholder="Enter stock's name" name="stock_ticker" required>
+            <input type="number" class="form-control " placeholder="Quantity of stocks" name="stock_quantity" min="1" required>
+            <button class="btn btn-outline-primary" type="submit">Buy</button>
+        </form>
+    </div>
+
+
+{% endblock %}
