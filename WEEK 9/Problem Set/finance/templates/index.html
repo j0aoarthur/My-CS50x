@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <div class="container mx-auto">
+
+        <div class="alert alert-success w-75 mx-auto">
+            <h3 class="">Your Portifolio of stocks</h3>
+        </div>
+
+        <table class="table table-light mt-5 table-striped text-center rounded-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Current Unit. price</th>
+                    <th>Quantity</th>
+                    <th>Investment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in stocks %}
+                <tr>
+                    <td> {{ row['name'] }} </td>
+                    <td> {{ row['currentPrice'] }} </td>
+                    <td> {{ row['quantity'] }} </td>
+                    <td class="{% if row['investment'] > 0 %} text-success {% 0 > elif row['investment'] %} text-danger {% endif %}" > {{ row['investment'] }} </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

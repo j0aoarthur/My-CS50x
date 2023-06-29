@@ -1,21 +1,19 @@
 import os
-import yfinance as yf
-
-from cs50 import SQL
-from flask import Flask, g, flash, redirect, render_template, request, session
-from flask_session import Session
 from tempfile import mkdtemp
+
+import yfinance as yf
+from cs50 import SQL
+from flask import Flask, flash, g, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-
-from helpers import apology, login_required, usd, get_stock
+from flask_session import Session
+from helpers import apology, get_stock, login_required, usd
 
 # Configure application
 app = Flask(__name__)
 
 # Custom filter
 app.jinja_env.filters["usd"] = usd
-
 
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -36,8 +34,6 @@ def before_request():
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
-
-
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
@@ -52,9 +48,14 @@ def after_request(response):
 def index():
     """Show portfolio of stocks"""
 
+    client_stocks = db.execute("SELECT symbol,sum(quantity) AS quantity,companyName, sum(totalPrice) AS total FROM logs WHERE id = ? AND action = 'purchase' GROUP BY symbol", session["user_id"])
     
-    return apology("TODO")
+    for row in client_stocks:
+        stock = get_stock(row["symbol"])
+        row['currentPrice'] = stock['price']
+        row['investment'] = row['total'] - (row['currentPrice'] * row['quantity'])
 
+    return render_template("index.html", stocks=client_stocks)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -90,10 +91,12 @@ def buy():
         db.execute("UPDATE users SET cash = ? WHERE id = ?", cash_user, session['user_id'])
 
         # Log stock's infos into a log table
-        db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?,?)", 
-                   session["user_id"], purchase_stock['name'], 
-                    purchase_stock['symbol'], purchase_stock['price'], 
-                    purchase_stock['quantity'], 'purchase')
+        # db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?,?)", 
+        #            session["user_id"], purchase_stock['name'], 
+        #             purchase_stock['symbol'], purchase_stock['price'], 
+        #             purchase_stock['quantity'], 'purchase')
+
+        db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Netflix', 'NFLX', 360, 'purchase', -1")
         
         # Update prices to fit us dollar format
         purchase_stock['price'] = usd(purchase_stock['price'])
@@ -104,18 +107,6 @@ def buy():
         
 
     return render_template("buy.html")
-
-
-
-
-
-
-
-
-
-
-    return apology("TODO")
-
 
 @app.route("/history")
 @login_required
@@ -277,9 +268,15 @@ INSERT INTO purchases (id, companyName, symbol, transactionPrice, quantity, acti
 
 
 
+SELECT symbol,quantity,companyName,totalPrice, sum(totalPrice) as total WHERE id = ? AND WHERE action = 'purchase' GROUP BY symbol
+SELECT symbol,sum(quantity),companyName, sum(totalPrice) AS total FROM logs WHERE id = 1 AND action = 'purchase' GROUP BY symbol
+
+INSERT INTO purchases (id, companyName, symbol, purchasePrice, quantity) VALUES (); 
 
 
-INSERT INTO purchases (id, companyName, symbol, purchasePrice, quantity) VALUES (1, 'Netflix', 'NFLX', 360, 2); 
+
+
+"INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Netflix', 'NFLX', 360, 'purchase', -1)", 
 
 """
 
