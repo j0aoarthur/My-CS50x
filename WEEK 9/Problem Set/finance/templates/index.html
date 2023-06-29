@@ -26,7 +26,20 @@
                     <td> {{ row['name'] }} </td>
                     <td> {{ row['currentPrice'] }} </td>
                     <td> {{ row['quantity'] }} </td>
-                    <td class="{% if row['investment'] > 0 %} text-success {% 0 > elif row['investment'] %} text-danger {% endif %}" > {{ row['investment'] }} </td>
+                    {% if row['investment'] > 0 %} 
+                        <td class="text-success">
+                            {{ row['investment'] }}
+                        </td>
+                    {% elif 0 > row['investment'] %} 
+                        <td class="text-danger">
+                            {{ row['investment'] }}
+                        </td>
+                    {% else %}
+                        <td>
+                            {{ row['investment'] }}
+                        </td>
+                    {% endif %}
+                    <!-- <td class="{% if row['investment'] > 0 %} text-success {% 0 > elif row['investment'] %} text-danger {% endif %}} " > {{ row['investment'] }} </td> -->
                 </tr>
             </tbody>
         </table>
