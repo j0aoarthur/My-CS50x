@@ -53,9 +53,12 @@ def index():
     for row in client_stocks:
         stock = get_stock(row["symbol"])
         row['currentPrice'] = stock['price']
-        row['investment'] = row['total'] - (row['currentPrice'] * row['quantity'])
+        row['investment'] = round((row['currentPrice'] * row['quantity']) - row['total'], 2)
 
-    return render_template("index.html", stocks=client_stocks)
+    dictcash_user = db.execute("SELECT cash FROM users WHERE id = ?", session['user_id'])
+    cash_user = usd(dictcash_user[0]['cash'])
+
+    return render_template("index.html", stocks=client_stocks, currentCash=cash_user )
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -69,11 +72,13 @@ def buy():
         if stock == None:
             return render_template("quote.html")
         purchase_stock = get_stock(stock) # gets name,symbol, price
-        purchase_stock['quantity'] = request.form.get("stock_quantity", None)
 
         # Check if stock exists
         if purchase_stock == None:
             return apology("No stocks found with this name", 404)
+        
+        # Get quantity of stocks
+        purchase_stock['quantity'] = request.form.get("stock_quantity", None)
         
         # Make math to get the total purchase
         purchase_stock['totalPrice'] = purchase_stock['price'] * float(purchase_stock['quantity'])
@@ -95,10 +100,6 @@ def buy():
                    session["user_id"], purchase_stock['name'], 
                     purchase_stock['symbol'], purchase_stock['price'], 
                     purchase_stock['quantity'], 'purchase')
-        
-        # Update prices to fit us dollar format
-        purchase_stock['price'] = usd(purchase_stock['price'])
-        purchase_stock['totalPrice'] = usd(purchase_stock['totalPrice'])
 
         
         return render_template("bought.html", purchase_stock=purchase_stock, currentCash=usd(cash_user))
@@ -274,7 +275,7 @@ INSERT INTO purchases (id, companyName, symbol, purchasePrice, quantity) VALUES 
 
 
 
-"INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Netflix', 'NFLX', 360, 'purchase', -1)", 
+"INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Microsoft', 'MSFT', 400, 'purchase', 3)", 
 
 """
 

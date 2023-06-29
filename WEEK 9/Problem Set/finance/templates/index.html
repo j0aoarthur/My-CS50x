@@ -7,8 +7,9 @@
 {% block main %}
     <div class="container mx-auto">
 
-        <div class="alert alert-success w-75 mx-auto">
+        <div class="alert alert-primary w-75 mx-auto">
             <h3 class="">Your Portifolio of stocks</h3>
+            <p class="h6">Current Cash: {{currentCash}}</p>
         </div>
 
         {% if stocks %}
@@ -19,7 +20,7 @@
                         <th>Company Name</th>
                         <th>Current Unit. price</th>
                         <th>Quantity</th>
-                        <th>Investment</th>
+                        <th>Win/Loss</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,22 +28,9 @@
                     <tr>
                         <td> {{ row['symbol'] }} </td>
                         <td> {{ row['companyName']}}</td>
-                        <td> {{ row['currentPrice'] }} </td>
+                        <td> ${{ row['currentPrice'] }} </td>
                         <td> {{ row['quantity'] }} </td>
-                        {% if row['investment'] > 0 %} 
-                            <td class="text-success">
-                                {{ row['investment'] }}
-                            </td>
-                        {% elif 0 > row['investment'] %} 
-                            <td class="text-danger">
-                                {{ row['investment'] }}
-                            </td>
-                        {% else %}
-                            <td>
-                                {{ row['investment'] }}
-                            </td>
-                        {% endif %}
-                        <!-- <td></td> -->
+                        <td class=" {% if row['investment'] > 0 %} text-success {% elif 0 > row['investment'] %} text-danger {% endif %}" > ${{row['investment']}} </td>
                     </tr>
                     {% endfor %}
                 </tbody>
