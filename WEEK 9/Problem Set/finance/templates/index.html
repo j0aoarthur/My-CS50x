@@ -11,38 +11,50 @@
             <h3 class="">Your Portifolio of stocks</h3>
         </div>
 
-        <table class="table table-light mt-5 table-striped text-center rounded-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Current Unit. price</th>
-                    <th>Quantity</th>
-                    <th>Investment</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in stocks %}
-                <tr>
-                    <td> {{ row['name'] }} </td>
-                    <td> {{ row['currentPrice'] }} </td>
-                    <td> {{ row['quantity'] }} </td>
-                    {% if row['investment'] > 0 %} 
-                        <td class="text-success">
-                            {{ row['investment'] }}
-                        </td>
-                    {% elif 0 > row['investment'] %} 
-                        <td class="text-danger">
-                            {{ row['investment'] }}
-                        </td>
-                    {% else %}
-                        <td>
-                            {{ row['investment'] }}
-                        </td>
-                    {% endif %}
-                    <!-- <td class="{% if row['investment'] > 0 %} text-success {% 0 > elif row['investment'] %} text-danger {% endif %}} " > {{ row['investment'] }} </td> -->
-                </tr>
-            </tbody>
-        </table>
+        {% if stocks %}
+            <table class="table table-light mt-5 table-striped text-center rounded-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Current Unit. price</th>
+                        <th>Quantity</th>
+                        <th>Investment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in stocks %}
+                    <tr>
+                        <td> {{ row['name'] }} </td>
+                        <td> {{ row['currentPrice'] }} </td>
+                        <td> {{ row['quantity'] }} </td>
+                        {% if row['investment'] > 0 %} 
+                            <td class="text-success">
+                                {{ row['investment'] }}
+                            </td>
+                        {% elif 0 > row['investment'] %} 
+                            <td class="text-danger">
+                                {{ row['investment'] }}
+                            </td>
+                        {% else %}
+                            <td>
+                                {{ row['investment'] }}
+                            </td>
+                        {% endif %}
+                        <!-- <td></td> -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <div>
+                <h5>You don't have any stocks. Buy one!</h5>
+                <a class="btn btn-primary" href="/buy">Buy a stock</a>
+            </div>
+            
+        {% endif %}
+
+        
 
     </div>
 {% endblock %}

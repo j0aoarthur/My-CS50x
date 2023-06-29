@@ -49,7 +49,9 @@ def index():
     """Show portfolio of stocks"""
 
     client_stocks = db.execute("SELECT symbol,sum(quantity) AS quantity,companyName, sum(totalPrice) AS total FROM logs WHERE id = ? AND action = 'purchase' GROUP BY symbol", session["user_id"])
-    
+    client_stocks = 1
+    print(client_stocks)
+
     for row in client_stocks:
         stock = get_stock(row["symbol"])
         row['currentPrice'] = stock['price']
