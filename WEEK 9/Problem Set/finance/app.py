@@ -49,8 +49,6 @@ def index():
     """Show portfolio of stocks"""
 
     client_stocks = db.execute("SELECT symbol,sum(quantity) AS quantity,companyName, sum(totalPrice) AS total FROM logs WHERE id = ? AND action = 'purchase' GROUP BY symbol", session["user_id"])
-    client_stocks = 1
-    print(client_stocks)
 
     for row in client_stocks:
         stock = get_stock(row["symbol"])
@@ -70,7 +68,7 @@ def buy():
         stock = request.form.get("stock_ticker", None)
         if stock == None:
             return render_template("quote.html")
-        purchase_stock = get_stock(stock)
+        purchase_stock = get_stock(stock) # gets name,symbol, price
         purchase_stock['quantity'] = request.form.get("stock_quantity", None)
 
         # Check if stock exists
@@ -93,12 +91,10 @@ def buy():
         db.execute("UPDATE users SET cash = ? WHERE id = ?", cash_user, session['user_id'])
 
         # Log stock's infos into a log table
-        # db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?,?)", 
-        #            session["user_id"], purchase_stock['name'], 
-        #             purchase_stock['symbol'], purchase_stock['price'], 
-        #             purchase_stock['quantity'], 'purchase')
-
-        db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Netflix', 'NFLX', 360, 'purchase', -1")
+        db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?,?)", 
+                   session["user_id"], purchase_stock['name'], 
+                    purchase_stock['symbol'], purchase_stock['price'], 
+                    purchase_stock['quantity'], 'purchase')
         
         # Update prices to fit us dollar format
         purchase_stock['price'] = usd(purchase_stock['price'])

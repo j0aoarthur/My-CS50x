@@ -92,5 +92,8 @@ def get_stock(ticker_symbol):
     ticker_info['price'] = stock_info.get("currentPrice", None)
     ticker_info['symbol'] = stock_info.get("symbol", None)
     
+    if None in [ticker_info['price'], ticker_info['symbol'], ticker_info['name']]:
+        return None
+
 
     return ticker_info

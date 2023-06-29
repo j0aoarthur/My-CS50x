@@ -16,6 +16,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Company Name</th>
                         <th>Current Unit. price</th>
                         <th>Quantity</th>
                         <th>Investment</th>
@@ -24,7 +25,8 @@
                 <tbody>
                     {% for row in stocks %}
                     <tr>
-                        <td> {{ row['name'] }} </td>
+                        <td> {{ row['symbol'] }} </td>
+                        <td> {{ row['companyName']}}</td>
                         <td> {{ row['currentPrice'] }} </td>
                         <td> {{ row['quantity'] }} </td>
                         {% if row['investment'] > 0 %} 
@@ -47,7 +49,7 @@
             </table>
 
         {% else %}
-            <div>
+            <div class="my-5">
                 <h5>You don't have any stocks. Buy one!</h5>
                 <a class="btn btn-primary" href="/buy">Buy a stock</a>
             </div>
