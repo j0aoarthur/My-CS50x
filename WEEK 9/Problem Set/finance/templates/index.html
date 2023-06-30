@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Log In
+    Portifolio
 {% endblock %}
 
 {% block main %}
@@ -13,11 +13,11 @@
         </div>
 
         {% if stocks %}
-            <table class="table table-light mt-5 table-striped text-center rounded-table">
+            <table class="table table-light mt-5 table-striped text-end">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Company Name</th>
+                        <th class="text-start">Name</th>
+                        <th class="text-start">Company Name</th>
                         <th>Current Unit. price</th>
                         <th>Quantity</th>
                         <th>Win/Loss</th>
@@ -25,14 +25,20 @@
                 </thead>
                 <tbody>
                     {% for row in stocks %}
+
                     <tr>
-                        <td> {{ row['symbol'] }} </td>
-                        <td> {{ row['companyName']}}</td>
+                        <td class="text-start"> {{ row['symbol'] }} </td>
+                        <td class="text-start"> {{ row['companyName']}}</td>
                         <td> ${{ row['currentPrice'] }} </td>
-                        <td> {{ row['quantity'] }} </td>
+                        <td> {{ row['quantity_total'] }} </td>
                         <td class=" {% if row['investment'] > 0 %} text-success {% elif 0 > row['investment'] %} text-danger {% endif %}" > ${{row['investment']}} </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td colspan="3"></td>
+                        <th>Portifolio Price: </th>
+                        <td> {{portifolioValue}} </td>
+                    </tr>
                 </tbody>
             </table>
 

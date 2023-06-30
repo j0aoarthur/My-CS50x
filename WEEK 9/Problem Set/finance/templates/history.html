@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <div class="container mx-auto">
+
+
+        {% if stocks %}
+            <table class="table mt-5 text-end">
+                <thead>
+                    <tr>
+                        <th class="text-start">Company Name</th>
+                        <th class="text-start">Name</th>
+                        <th>Quantity</th>
+                        <th>Price bought</th>
+                        <th>Trasacted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in stocks %}
+                    <tr>
+                        <td class="text-start"> {{ row['companyName']}}</td>
+                        <td class="text-start"> {{ row['symbol'] }} </td>
+                        <td> {{ row['quantity'] }} </td>
+                        <td> ${{ row['transactionPrice'] }} </td>
+                        <td> {{ row['time'] }} </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        {% endif %}
+
+        
+
+    </div>
+{% endblock %}

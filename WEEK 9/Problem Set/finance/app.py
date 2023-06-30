@@ -3,7 +3,7 @@ from tempfile import mkdtemp
 
 import yfinance as yf
 from cs50 import SQL
-from flask import Flask, flash, g, redirect, render_template, request, session
+from flask import Flask, flash, g, redirect, render_template, request, session, get_flashed_messages
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_session import Session
@@ -48,17 +48,24 @@ def after_request(response):
 def index():
     """Show portfolio of stocks"""
 
-    client_stocks = db.execute("SELECT symbol,sum(quantity) AS quantity,companyName, sum(totalPrice) AS total FROM logs WHERE id = ? AND action = 'purchase' GROUP BY symbol", session["user_id"])
+    client_stocks = db.execute("""SELECT symbol, quantity_total, companyName, total FROM 
+                                (SELECT symbol, SUM(quantity) AS quantity_total, companyName, 
+                                SUM(totalPrice) AS total FROM logs WHERE id = ? GROUP BY symbol) 
+                                AS subquery WHERE quantity_total > 0""", session["user_id"])
+
+    total_value = 0
 
     for row in client_stocks:
         stock = get_stock(row["symbol"])
         row['currentPrice'] = stock['price']
-        row['investment'] = round((row['currentPrice'] * row['quantity']) - row['total'], 2)
+        row_value = row['currentPrice'] * row['quantity_total']
+        total_value += row_value
+        row['investment'] = round(row_value - row['total'], 2)
 
     dictcash_user = db.execute("SELECT cash FROM users WHERE id = ?", session['user_id'])
     cash_user = usd(dictcash_user[0]['cash'])
 
-    return render_template("index.html", stocks=client_stocks, currentCash=cash_user )
+    return render_template("index.html", stocks=client_stocks, currentCash=cash_user, portifolioValue=usd(total_value))
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -79,7 +86,7 @@ def buy():
         
         # Get quantity of stocks
         purchase_stock['quantity'] = request.form.get("stock_quantity", None)
-        
+
         # Make math to get the total purchase
         purchase_stock['totalPrice'] = purchase_stock['price'] * float(purchase_stock['quantity'])
 
@@ -101,8 +108,10 @@ def buy():
                     purchase_stock['symbol'], purchase_stock['price'], 
                     purchase_stock['quantity'], 'purchase')
 
+        get_flashed_messages("Stock sold successfully!")
         
-        return render_template("bought.html", purchase_stock=purchase_stock, currentCash=usd(cash_user))
+        # return render_template("bought.html", purchase_stock=purchase_stock, currentCash=usd(cash_user))
+        return redirect("/")
         
 
     return render_template("buy.html")
@@ -111,7 +120,10 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+
+    logs = db.execute("SELECT symbol,companyName, transactionPrice, time, quantity FROM logs WHERE id = ?", session['user_id'])
+
+    return render_template("history.html", stocks=logs)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -181,12 +193,12 @@ def quote():
     if stock == None:
         return render_template("quote.html")
 
-    purchase_stock = get_stock(stock)
+    searched_stock = get_stock(stock)
 
-    if purchase_stock == None:
+    if searched_stock == None:
         return apology("No stocks found with this name", 404)
 
-    return render_template("quote.html", stocks=purchase_stock, search=request.args.get("stock_ticker", None))
+    return render_template("quote.html", stocks=searched_stock, search=request.args.get("stock_ticker", None))
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -236,7 +248,40 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+
+    nameStocks = db.execute("""SELECT symbol FROM (SELECT symbol, SUM(quantity) AS quantity_total, 
+                            companyName, SUM(totalPrice) AS total FROM logs WHERE id = ? GROUP BY symbol) 
+                            AS subquery WHERE quantity_total > 0""", session["user_id"])
+    
+    if request.method == 'POST':
+        stock = request.form.get("stock_ticker")
+
+        if stock == None:
+            return apology("You didn't select any stock.", 403)
+        
+        sold_stock = get_stock(stock)
+        sold_stock['quantity'] = int(request.form.get("stock_quantity"))
+
+        stock_quantity = db.execute("SELECT SUM(quantity) as quantity FROM logs WHERE id = ? AND SYMBOL = ?", session['user_id'], stock)
+
+
+        if stock_quantity[0]['quantity'] < sold_stock['quantity']:
+            return apology("Too many stocks", 403)
+        
+        db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", (sold_stock['price'] * sold_stock['quantity']), session["user_id"])
+
+        sold_stock['quantity'] *= -1
+        
+        db.execute("INSERT INTO logs (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?,?)", 
+                    session["user_id"], sold_stock['name'], 
+                        sold_stock['symbol'], sold_stock['price'], 
+                        sold_stock['quantity'], 'sell')
+
+        
+
+        return redirect("/")
+
+    return render_template("sell.html", stocks=nameStocks)
 
 
 # CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -244,38 +289,15 @@ def sell():
 #                       cash NUMERIC NOT NULL DEFAULT 10000.00);
 # CREATE TABLE sqlite_sequence(name,seq);
 # CREATE UNIQUE INDEX username ON users (username);
-
-"""
-CREATE TABLE logs (
-    id INTEGER NOT NULL,
-    companyName TEXT NOT NULL,
-    symbol TEXT NOT NULL,
-    transactionPrice NUMERIC NOT NULL,
-    action TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
-    totalPrice NUMERIC GENERATED ALWAYS AS (transactionPrice * quantity) STORED,
-    time DATETIME DEFAULT CURRENT_TIMESTAMP, 
-    FOREIGN KEY(id) REFERENCES users(id)
-);
-
-
-INSERT INTO purchases (id, companyName, symbol, transactionPrice, quantity, action) VALUES (?,?,?,?,?), 
-(session["user_id"], purchase_stock['name'], purchase_stock['symbol'], purchase_stock['price'], purchase_stock['quantity'], 'purchase')
-
-
-
-
-
-
-SELECT symbol,quantity,companyName,totalPrice, sum(totalPrice) as total WHERE id = ? AND WHERE action = 'purchase' GROUP BY symbol
-SELECT symbol,sum(quantity),companyName, sum(totalPrice) AS total FROM logs WHERE id = 1 AND action = 'purchase' GROUP BY symbol
-
-INSERT INTO purchases (id, companyName, symbol, purchasePrice, quantity) VALUES (); 
-
-
-
-
-"INSERT INTO logs (id, companyName, symbol, transactionPrice, action, quantity) VALUES (1, 'Microsoft', 'MSFT', 400, 'purchase', 3)", 
-
-"""
+# CREATE TABLE logs (
+#     id INTEGER NOT NULL,
+#     companyName TEXT NOT NULL,
+#     symbol TEXT NOT NULL,
+#     transactionPrice NUMERIC NOT NULL,
+#     action TEXT NOT NULL,
+#     quantity INTEGER NOT NULL,
+#     totalPrice NUMERIC GENERATED ALWAYS AS (transactionPrice * quantity) STORED,
+#     time DATETIME DEFAULT CURRENT_TIMESTAMP, 
+#     FOREIGN KEY(id) REFERENCES users(id)
+# );
 

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sell
+{% endblock %}
+
+{% block main %}
+
+    <div class="w-25 mx-auto">
+
+        <h3> Sell a Stock </h3>
+        <form class="mt-3" action="/sell" method="post">
+            <select class="form-select my-2 text-center" name="stock_ticker" required>
+                <option class="" disabled selected>Symbol</option>
+                {% for row in stocks %}
+                    <option value="{{row['symbol']}}"> {{row['symbol']}} </option>
+                {% endfor %}
+            </select>
+            <input type="number" class="form-control my-2" placeholder="Quantity of stocks" name="stock_quantity" min="1" required>
+            <button class="btn btn-outline-primary my-2" type="submit">Sell</button>
+        </form>
+    </div>
+
+
+{% endblock %}
