@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    QRIFY
+{% endblock %}
+
+{% block body %}
+<section class="d-flex justify-content-center align-items-center flex-column " id="qrify">
+    <div class="my-auto text-center" id="display-p">
+        <h1  id="logo-principal" >
+            <a class="logo" href="/">QRIFY</a>
+        </h1>
+        <a class="btn btn-outline-light" href="/generate"> Click to Generate a QR Code</a>
+    </div>
+        
+</section>
+
+<section class="bg-black d-flex align-items-center p-5" id="intro">
+    <div class="col-md">
+        <img class="imgs" src="static/img1.jpg" width="350px" alt="">
+    </div>
+    <article class="col-md">
+        <h2 class="title">Introduction</h2>
+        <p class="text-light">
+            Welcome to QRify, the ultimate QR code generator! You're about to witness the magic of 
+            turning your flabbergasting thoughts and cryptic ideas into scannable wonders. 
+            Join the revolution and unleash the power of QR codes in just a few simple clicks. 
+            Can't wait to get started? Neither can we! So let's dance through the digital 
+            realm and create something mind-blowing together.
+        </p>
+    </article>
+</section>
+<section class="row w-100 d-flex p-5 align-items-center" id="how">
+    <h2 class="mb-4 text-black py-3">How QRify Works</h2>
+    <div class="col-md">
+        <img class="imgs" src="static/img2.jpg" width="430px" alt="">
+    </div>
+    <article class="col-md">
+        <div>
+            <h5>Input your URL</h5>
+            <p>Share your site, product, or idea in a single URL</p>
+        </div>
+
+        <div>
+            <h5>Generate your QR code</h5>
+            <p>Watch as we instantly create a scannable masterpiece</p>
+        </div>
+
+        <div>
+            <h5>Spread the magic</h5>
+            <p>Print, save or share the QR code with the world</p>
+        </div>
+    </article>
+</section>
+<div class="" id="icons">
+    
+</div>
+<section class="row w-100 d-flex align-items-center p-5 flex-column" id="faq">
+    <h2 class="mb-5 text-center">Frequently Asked Questions</h2>
+    <div class="row mt-2 w-100">
+
+        <div class="col-md">
+            <h5>What is a QR code?</h5>
+            <p>A QR code, short for Quick Response code, is a two-dimensional barcode that consists of 
+                black squares arranged on a white background. It is designed to be scanned by a smartphone 
+                or QR code reader, enabling users to quickly access information or perform actions, 
+                such as opening a website, adding contact information, or initiating a payment.
+            </p>
+        </div>
+
+        <div class="col-md">
+            <h5>How do I generate a QR code using your website?</h5>
+            <p>Click on <a href="/generate">this link</a> and go straight to the webpage to generate your QR code,
+                you can customize it with any color and background color you want. Try it!
+            </p>
+        </div>
+
+        <div class="col-md">
+            <h5>How do I scan my QR code?</h5>
+            <p>Simply launch any QR code scanning app on your smartphone, point your camera at the code, and voilà!
+                 You're instantly directed to the content encoded within. It's digital wizardry at its finest!
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

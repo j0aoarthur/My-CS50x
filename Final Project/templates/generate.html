@@ -1,0 +1,80 @@
+
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Generate a QR code
+{% endblock %}
+
+{% block body %}
+
+    <h2 class="text-center my-4"> Generate a QR Code </h2>
+    <div class="text-white mx-auto w-75 row">
+        <form class="form col bg-black p-4" action="/generate" method="post">
+            <div class="">
+                <label for="qr_link">Type the URL:</label>
+                <input name="qr_link" class="form-control " type="text" placeholder="QR code link" required autofocus>
+            </div>
+
+            <div class="row py-3">
+                <div class="col">
+                    <label>
+                        Fill color:
+                    </label>
+                    <input type="color" class="form-control form-control-color" id="qr_color" name="qr_color" title="Choose your color">
+                </div>
+
+                <div class="col">
+                    <label>
+                        Background color:
+                    </label>
+                    <input type="color" class="form-control form-control-color" value="#ffffff" id="bg_color" name="bg_color" title="Choose your color">
+                </div>
+
+                <div class="col">
+                    <label>
+                        Transparent Background
+                    </label>
+                    <input class="form-check-input col-3" name="transparent" id="transparent" type="checkbox">
+                </div>
+            </div>
+
+            <button class="btn btn-lg btn-primary">Generate</button>
+        </form>
+
+        {% if qr %}
+
+        <div class="col {% if bg_col2 %} bg-black {% else %} bg-white {% endif %} text-center pb-4">
+            <img class="mx-auto p-5" src="data:image/png;base64,{{ qr }}" alt="qr-code">
+
+            <a class="btn btn-lg btn-primary" href="data:image/png;base64,{{ qr }}" download="qr-code.png" >
+                Download as PNG
+            </a>
+
+            <!-- <a class="btn btn-lg btn-success">
+                Download as SVG
+            </a> -->
+        </div>
+
+    {% endif %}
+    </div>
+
+    <script>
+
+        let bg_button = document.getElementById("bg_color");
+        let transparent_button = document.getElementById("transparent");
+
+        document.addEventListener("change", function() {
+            if (transparent_button.checked) {
+                bg_button.disabled = true;
+            }
+            else {
+                bg_button.disabled = false;
+            }
+        })
+
+    </script>
+
+    
+
+{% endblock %}

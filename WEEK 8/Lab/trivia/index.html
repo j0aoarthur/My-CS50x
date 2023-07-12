@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+        <script>
+
+            function wrong(button){
+                button.style.backgroundColor = 'red';
+            }
+
+            function right(button) {
+                button.style.backgroundColor = 'green';
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('#check').addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    let input = document.querySelector('#answer');
+                    let answer = input.value.trim();
+
+                    if (answer.toLowerCase() === 'switzerland') {
+                        input.style.backgroundColor = 'green';
+                    }
+                    else {
+                        input.style.backgroundColor = 'red';
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <h3>How much is 10 + 13</h3>
+
+                <button onclick="wrong(this)">25</button>
+                <button onclick="wrong(this)">22</button>
+                <button onclick="wrong(this)">24</button>
+                <button onclick="right(this)">23</button>
+                <button onclick="wrong(this)">30</button>
+
+                <!-- TODO: Add multiple choice question here -->
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr>
+                <h3>In which country is it illegal to own only one guinea pig, as a lone guinea pig might get lonely?</h3>
+                <!-- TODO: Add free response question here -->
+                <form>
+                    <input id="answer" type="text">
+                    <button id="check" type="submit">Check</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
